@@ -37,6 +37,12 @@ df['Text_Bersih'] = df['Text_Bersih'].apply(cleansing_text)
 print(df.info())
 print(df['Text_Bersih'].head())
 
+# Memeriksa ukuran (dimensi) dari DataFrame (jumlah baris dan kolom)
+df.shape
+
+# Menghitung jumlah kemunculan setiap nilai unik dalam kolom Sentiment dari DataFrame
+df['Sentiment'].value_counts()
+
 """Step 2: Normalize Slang Using new_kamusalay.csv"""
 
 # Load slang dictionary
@@ -150,11 +156,15 @@ augmented_df = pd.DataFrame({
 
 """Step 5: Encode Labels"""
 
+import numpy as np
 from sklearn.preprocessing import LabelEncoder
 
 # Encode labels
 label_encoder = LabelEncoder()
 augmented_df['Encoded_Sentiment'] = label_encoder.fit_transform(augmented_df['Sentiment'])
+
+# Simpan hasil encoding ke file .npy
+np.save('/content/drive/MyDrive/DSC25/PlatinumChallenge/classes.npy', label_encoder.classes_)
 
 # Display results
 print(augmented_df.head())
@@ -283,10 +293,10 @@ model.add(Embedding(input_dim=num_words,
                     output_dim=embedding_dim,
                     weights=[embedding_matrix],
                     trainable=False))
-model.add(Bidirectional(LSTM(256, return_sequences=True)))
-model.add(Dropout(0.6)) # Meningkatkan Dropout untuk regularisasi
-model.add(Bidirectional(LSTM(256)))
-model.add(Dropout(0.6)) # Tambahkan Dropout setelah layer kedua
+model.add(Bidirectional(LSTM(128, return_sequences=True)))
+model.add(Dropout(0.5)) # Meningkatkan Dropout untuk regularisasi
+model.add(Bidirectional(LSTM(64)))
+model.add(Dropout(0.5)) # Tambahkan Dropout setelah layer kedua
 model.add(Dense(3, activation='softmax'))
 
 # Mengompilasi model
@@ -296,15 +306,15 @@ model.compile(optimizer=optimizer,
               metrics=['accuracy'])
 
 # Callbacks
-early_stopping = EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)
-reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=3, min_lr=1e-7)
+early_stopping = EarlyStopping(monitor='val_loss', patience=2, restore_best_weights=True)
+reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=2, min_lr=1e-7)
 
 y_train = y_train.reset_index(drop=True)
 
 # Melatih model
 history = model.fit(X_train, y_train,
                     validation_split=0.2,
-                    epochs=50,  # Tetap gunakan jumlah epoch besar, EarlyStopping akan menghentikan lebih awal
+                    epochs=20,  # Tetap gunakan jumlah epoch besar, EarlyStopping akan menghentikan lebih awal
                     batch_size=64,  # Kurangi batch size tidak apa-apa
                     class_weight=class_weights_dict,
                     callbacks=[early_stopping, reduce_lr],
@@ -383,8 +393,8 @@ def custom_sentiment_prediction(text):
 # Test examples
 #texts = ["Rasa syukur, cukup", "JAHAT!!!", "Saya suka banget nasi goreng"]
 #texts = ["Ya udah.. dijual lah, goblok!!!", "Yang kamu lakuin ke aku itu, JAHAT!!!", "Baiklah kalau begitu"]
-#texts = ["Kata hati saya: Semoga dapat jodoh yg sabar, setia, rendah hati, sehat lahir dan batin"]
-texts = ["Sayangi dirimu", "Pak ustadz nanya dong gimana klo kecanduan rokok, judi, narkoba, pinjol, mabuk, mabuk agama"]
+texts = ["Kata hati saya: Semoga dapat jodoh yg sabar, setia, rendah hati, sehat lahir dan batin"]
+#texts = ["Sayangi dirimu", "Pak ustadz nanya dong gimana klo kecanduan rokok, judi, narkoba, pinjol, mabuk, mabuk agama"]
 
 # Display predictions
 for text in texts:
@@ -394,15 +404,10 @@ for text in texts:
 """Step 14: Save (Model dan Objek x_pad_sequences)"""
 
 # Save Model
-model.save('/content/drive/MyDrive/DSC25/PlatinumChallenge/model_lstm.keras')
+model.save('/content/drive/MyDrive/DSC25/PlatinumChallenge/model-lstm.keras')
 print("Model saved successfully")
 
-# Save x_pad_sequences
-import pickle
-
-file_path = '/content/drive/MyDrive/DSC25/PlatinumChallenge/x_pad_sequences.pickle'
-
-# Simpan objek ke berkas pickle
-with open(file_path, 'wb') as file:
-    pickle.dump(padded_sequences, file)
-    print("padded_sequences saved successfully")
+# Simpan objek ke berkas
+with open('/content/drive/MyDrive/DSC25/PlatinumChallenge/tokenizer-lstm.json', 'w') as f:
+    f.write(tokenizer.to_json())
+    print("Tokenizer saved successfully")
