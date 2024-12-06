@@ -1,0 +1,38 @@
+openapi: 3.0.0
+info:
+  title: LSTM Sentiment Analysis API
+  version: '1.0'
+  description: API untuk menganalisis sentimen teks menggunakan model LSTM.
+tags:
+  - name: Sentiment Analysis
+    description: Operasi terkait analisis sentimen
+paths:
+  /predict:
+    get:
+      tags:
+        - Sentiment Analysis
+      summary: Prediksi sentimen dari teks input
+      description: Mengembalikan prediksi sentimen (positif, negatif, atau netral) berdasarkan teks yang diberikan.
+      parameters:
+        - name: text
+          in: query
+          required: true
+          description: Teks yang akan dianalisis sentimennya.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Prediksi berhasil dilakukan.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sentiment:
+                    type: string
+                    description: Hasil prediksi sentimen.
+                    example: positif
+        '400':
+          description: Bad Request (Permintaan tidak valid, misalnya parameter teks kosong).
+        '500':
+          description: Internal Server Error
