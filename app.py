@@ -4,6 +4,7 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.text import tokenizer_from_json
+from flask_swagger_ui import get_swaggerui_blueprint
 from sklearn.preprocessing import LabelEncoder
 import pandas as pd
 import pickle
@@ -167,13 +168,25 @@ def remove_stopwords(text, stop_words):
 #     except Exception as e:
 #         return jsonify({'error': str(e)}), 500
 
+# Swagger UI configuration
+SWAGGER_URL = '/swagger'  # URL untuk Swagger UI
+API_URL = '/static/lstm_nn.yml'  # Path ke file Swagger
+
+swaggerui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={'app_name': "Sentiment Analysis & Neural Network API"}
+)
+
+app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
+
 # Endpoint GET untuk status server
 @app.route('/api/status', methods=['GET'])
 def status():
     return jsonify({'status': 'API is running'})
 
 # Endpoint GET untuk friendly message
-@app.route('/api/predict', methods=['GET'])
+@app.route('/api/predict/lstm', methods=['GET'])
 def predict_info():
     return jsonify({
         'message': 'Use POST method to access this endpoint. Send JSON with key "text".',
