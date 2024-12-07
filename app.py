@@ -29,7 +29,7 @@ tokenizer = tokenizer_from_json(tokenizer_data)
 print("Tipe Tokenizer:", type(tokenizer))
 
 # Convert text to sequences
-def process_text(text, tokenizer, max_sequence_length=36):
+def process_text(text, tokenizer, max_sequence_length=MAX_SEQUENCE_LENGTH):
     # Mengubah teks menjadi sequences
     sequences = tokenizer.texts_to_sequences([text])
     # Menambahkan padding pada sequences
@@ -143,6 +143,49 @@ def predict():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+# Endpoint for text prediction
+@app.route('/api/predict-file-lstm', methods=['POST'])
+def predict_file():
+    if 'file' not in request.files:
+        return jsonify({"error": "File is required"}), 400
+
+    file = request.files['file']
+
+    # Read the file (assumes a text file)
+    try:
+        lines = file.read().decode('utf-8').splitlines()
+    except Exception as e:
+        return jsonify({"error": f"Failed to read the file: {str(e)}"}), 400
+
+    # Process each line in the file
+    predictions = []
+    for text in lines:
+        if not text.strip():
+            continue
+
+        # Cleansing the input text
+        processed_text = cleansing_text(text)
+
+        # Tokenize and pad the text
+        sequence = tokenizer.texts_to_sequences([processed_text])
+        padded = pad_sequences(sequence, maxlen=MAX_SEQUENCE_LENGTH, padding='post')
+
+        # Predict sentiment
+        prediction = model_lstm.predict(padded, verbose=0)
+        predicted_label = label_encoder.inverse_transform([np.argmax(prediction)])[0]
+        confidence = float(np.max(prediction))
+
+        # Append the result for this text
+        result = {
+            "text": text,
+            "processed_text": processed_text,
+            "prediction": predicted_label,
+            "confidence": confidence
+        }
+        predictions.append(result)
+
+    return jsonify({"predictions": predictions})
 
 if __name__ == '__main__':
     app.run(debug=True)
