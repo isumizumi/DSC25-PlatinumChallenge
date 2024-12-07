@@ -1,4 +1,4 @@
-#   
+# Building a Sentiment Analysis Engine & API
 
 ## Challenge: Membuat API untuk Analisis Sentimen dan Laporan Analisis Data Berdasarkan Sentimen
 
@@ -8,10 +8,9 @@
 - [Technologies Used](#technologies-used)
 - [Installation](#installation)
 - [Usage](#usage)
-- [API Endpoints](#api-endpoints)
-  - [Predict Sentiment](#predict-sentiment)
-- [How to Contribute](#how-to-contribute)
-- [License](#license)
+- [Reports](#reports)
+  - [Manual Sentiment Calculation Report](#manual-sentiment-calculation-report)
+  - [Data Analysis Report](#data-analysis-report)
 
 ---
 
@@ -38,7 +37,8 @@ This project involves building a sentiment analysis API powered by Neural Networ
 
 ## Technologies Used
 - **Frameworks & Libraries**:
-  - [Flask](https://flask.palletsprojects.com/) for building the API.
+  - [Flask](https://flask.palletsprojects.com/) for building the LSTM API.
+  - [Gradio](https://www.gradio.app/) for building the RNN API.
   - [TensorFlow/Keras](https://www.tensorflow.org/) for machine learning models.
   - [Scikit-learn](https://scikit-learn.org/) for preprocessing and evaluation.
   - [Matplotlib & Seaborn](https://seaborn.pydata.org/) for data visualization.
@@ -105,8 +105,8 @@ Follow these steps to set up the project:
 
 ## Usage
 
-### 1. Sentiment Prediction
-You can use the API to predict the sentiment of a given text using different machine learning models (LSTM, CNN, RNN).
+### 1. LSTM Sentiment Prediction
+You can use the LSTM API to predict the sentiment of a given text.
 
 #### Example Request: Predict Sentiment using LSTM
 - **Endpoint:** `/api/predict/lstm`
@@ -119,23 +119,32 @@ You can use the API to predict the sentiment of a given text using different mac
 - **Responses:**
     ```bash
     {
-    "sentiment": "positive",
-    "confidence": 0.94
+    "sentiment": "neutral",
+    "confidence": 0.70
     }
 
-### 2. API Documentation (Swagger)
-You can access detailed API documentation through Swagger. After running the application, navigate to:
-
-http://127.0.0.1:5000/swagger
+### 2. RNN Sentiment Prediction
+RNN Sentiment Analysis API using Gradio by executing the `rnn-api.py` script.
+    ```bash
+    python rnn-api.py
 
 ---
 
-## Manual Sentiment Calculation Report
+## API Documentation 
+
+LSTM Sentiment Analysis API using Swagger
+You can access detailed API documentation through Swagger. After running the application, navigate to:
+    ```bash
+    http://127.0.0.1:5000/swagger
+
+---
+
+## Reports
+
+### Manual Sentiment Calculation Report
 You can access detailed calculation report:
 [Manual Sentiment Calculation Report](https://docs.google.com/document/d/1X9n2kYE_QY9cRNHhnWrcg4FS_dxroT5l/edit?usp=sharing&ouid=101498873662196123612&rtpof=true&sd=true)
 
----
-
-## Data Analysis Report
+### Data Analysis Report
 You can access detailed data analysis report:
 [Data Analysis Report](https://colab.research.google.com/drive/1BMqlaSWA8RTgwbVfmQLimmnl7sMcBZff?usp=sharing)
