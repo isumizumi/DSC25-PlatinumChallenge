@@ -125,8 +125,10 @@ You can use the LSTM API to predict the sentiment of a given text.
 
 ### 2. RNN Sentiment Prediction
 RNN Sentiment Analysis API using Gradio by executing the `rnn-api.py` script.
+
     ```bash
     python rnn-api.py
+    ```
 
 ---
 
@@ -134,8 +136,10 @@ RNN Sentiment Analysis API using Gradio by executing the `rnn-api.py` script.
 
 LSTM Sentiment Analysis API using Swagger
 You can access detailed API documentation through Swagger. After running the application, navigate to:
+
     ```bash
     http://127.0.0.1:5000/swagger
+    ```
 
 ---
 
