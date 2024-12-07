@@ -108,7 +108,7 @@ Follow these steps to set up the project:
 ### 1. LSTM Sentiment Prediction
 You can use the LSTM API to predict the sentiment of a given text.
 
-#### Example Request: Predict Sentiment using LSTM
+#### Predict Sentiment using LSTM (Text)
 - **Endpoint:** `/api/predict/lstm`
 - **Method:** POST  
 - **Request Body:**
@@ -122,6 +122,25 @@ You can use the LSTM API to predict the sentiment of a given text.
     "sentiment": "neutral",
     "confidence": 0.70
     }
+
+#### Predict Sentiment using LSTM (File)
+- **Endpoint:** `/api/predict-file-lstm`
+- **Method:** POST  
+- **Example Request:**
+   1. Open a tool like Postman or Curl.
+   2. Attach the file in the request body under the key `"file"`.
+
+##### Curl Command:
+
+```
+curl -X POST -F "file=@your_file.txt" http://127.0.0.1:5000/predict-file-lstm
+```
+
+##### Postman:
+1. Set the request type to POST.
+2. Enter the URL http://127.0.0.1:5000/predict-file-lstm.
+3. Go to the "Body" tab, choose "form-data".
+4. Add a key named "file" and attach your .txt file (You can download this file from data folder: uji-teks.txt).
 
 ### 2. RNN Sentiment Prediction
 RNN Sentiment Analysis API using Gradio by executing the `rnn-api.py` script.

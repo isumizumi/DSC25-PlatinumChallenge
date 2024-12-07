@@ -72,3 +72,50 @@ paths:
           description: Invalid input
         '500':
           description: Internal server error
+  /api/predict-file-lstm:
+    post:
+      tags:
+        - Sentiment Analysis
+      summary: Predict sentiment for text inputs from a file.
+      description: Analyze the sentiment of multiple texts provided in a `.txt` file.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Text file with one text per line to analyze.
+      responses:
+        '200':
+          description: Sentiment predictions for each line in the file.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  predictions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        text:
+                          type: string
+                          description: Original text.
+                        processed_text:
+                          type: string
+                          description: Cleaned version of the text.
+                        prediction:
+                          type: string
+                          description: Predicted sentiment (positive, neutral, negative).
+                        confidence:
+                          type: number
+                          format: float
+                          description: Confidence score of the prediction.
+        '400':
+          description: Invalid input or missing file parameter.
+        '500':
+          description: Internal server error.
