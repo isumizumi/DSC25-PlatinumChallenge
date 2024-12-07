@@ -7,7 +7,6 @@ from tensorflow.keras.preprocessing.text import tokenizer_from_json
 from flask_swagger_ui import get_swaggerui_blueprint
 from sklearn.preprocessing import LabelEncoder
 import pandas as pd
-import pickle
 import re
 import numpy as np
 import nltk
@@ -16,16 +15,6 @@ from nltk.tokenize import word_tokenize
 
 app = Flask(__name__)
 swagger = Swagger(app)
-
-# Tokenizer dan model CNN
-# with open('tokenizer_cnn.pickle', 'rb') as handle:
-#     tokenizer_cnn = pickle.load(handle)
-# model_cnn = load_model('model_cnn.h5')
-
-# # Tokenizer dan model RNN
-# with open('tokenizer_rnn.pickle', 'rb') as handle:
-#     tokenizer_rnn = pickle.load(handle)
-# model_rnn = load_model('model_rnn.h5')
 
 # Parameter untuk padding
 MAX_SEQUENCE_LENGTH = 36
@@ -49,7 +38,7 @@ def process_text(text, tokenizer, max_sequence_length=36):
 
 
 label_encoder = LabelEncoder()
-label_encoder.classes_ = np.load('data/resources_of_lstm/classes.npy', allow_pickle=True)
+label_encoder.classes_ = np.load('data/resources_of_lstm/classes-lstm.npy', allow_pickle=True)
 
 # Load slang dictionary
 kamus_alay = pd.read_csv('data/new_kamusalay.csv', header=None, index_col=0, encoding='latin-1').squeeze(axis=1).to_dict()
@@ -90,87 +79,9 @@ def remove_stopwords(text, stop_words):
     filtered_words = [word for word in words if word not in stop_words]
     return ' '.join(filtered_words)
 
-# @app.route('/predict/cnn', methods=['GET'])
-# def predict_cnn():
-#     """
-#     Prediksi sentimen menggunakan model CNN
-#     ---
-#     parameters:
-#       - name: text
-#         in: query
-#         type: string
-#         required: true
-#         description: Teks yang akan diprediksi sentimennya
-#     responses:
-#       200:
-#         description: Hasil prediksi sentimen
-#         examples:
-#           sentiment: positif
-#       400:
-#         description: Permintaan tidak valid
-#       500:
-#         description: Kesalahan server
-#     """
-#     text = request.args.get('text')
-#     if not text:
-#         return jsonify({'error': 'Parameter "text" diperlukan.'}), 400
-
-#     try:
-#         # Pembersihan teks
-#         cleaned_text = cleansing_text(text)
-#         # Ekstraksi fitur
-#         sequences = tokenizer_cnn.texts_to_sequences([cleaned_text])
-#         padded_sequences = pad_sequences(sequences, maxlen=MAX_SEQUENCE_LENGTH)
-#         # Prediksi
-#         prediction = model_cnn.predict(padded_sequences)
-#         sentiment = np.argmax(prediction, axis=1)[0]
-#         sentiment_label = ['negatif', 'netral', 'positif'][sentiment]
-#         return jsonify({'sentiment': sentiment_label}), 200
-#     except Exception as e:
-#         return jsonify({'error': str(e)}), 500
-
-# @app.route('/predict/rnn', methods=['GET'])
-# def predict_rnn():
-#     """
-#     Prediksi sentimen menggunakan model RNN
-#     ---
-#     parameters:
-#       - name: text
-#         in: query
-#         type: string
-#         required: true
-#         description: Teks yang akan diprediksi sentimennya
-#     responses:
-#       200:
-#         description: Hasil prediksi sentimen
-#         examples:
-#           sentiment: positif
-#       400:
-#         description: Permintaan tidak valid
-#       500:
-#         description: Kesalahan server
-#     """
-#     text = request.args.get('text')
-#     if not text:
-#         return jsonify({'error': 'Parameter "text" diperlukan.'}), 400
-
-#     try:
-#         # Pembersihan teks
-#         cleaned_text = cleansing_text(text)
-#         # Ekstraksi fitur
-#         sequences = tokenizer_rnn.texts_to_sequences([cleaned_text])
-#         padded_sequences = pad_sequences(sequences, maxlen=MAX_SEQUENCE_LENGTH)
-#         # Prediksi
-#         prediction = model_rnn.predict(padded_sequences)
-#         sentiment = np.argmax(prediction, axis=1)[0]
-#         sentiment_label = ['negatif', 'netral', 'positif'][sentiment]
-#         return jsonify({'sentiment': sentiment_label}), 200
-#     except Exception as e:
-#         return jsonify({'error': str(e)}), 500
-
 # Swagger UI configuration
 SWAGGER_URL = '/swagger'  # URL untuk Swagger UI
-API_URL = '/static/lstm_nn.yml'  # Path ke file Swagger
+API_URL = '/static/lstm.yml'  # Path ke file Swagger
 
 swaggerui_blueprint = get_swaggerui_blueprint(
     SWAGGER_URL,
